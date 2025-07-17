@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Upload, MapPin, Navigation, Cloud, Leaf, Trophy, Star, Zap } from "lucide-react";
+import { Upload, MapPin, Navigation, Cloud, Leaf, Trophy, Star, Zap, Camera } from "lucide-react";
 import Header from "@/components/Header";
 
 const Dashboard = () => {
@@ -13,11 +13,54 @@ const Dashboard = () => {
   const [toLocation, setToLocation] = useState("");
   const [ticketFile, setTicketFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setTicketFile(file);
+    }
+  };
+
+  const handleCameraCapture = async () => {
+    try {
+      setIsCapturing(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      
+      // Create video element
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.play();
+      
+      // Create canvas for capture
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Wait for video to load
+      video.onloadedmetadata = () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Capture after 3 seconds
+        setTimeout(() => {
+          ctx?.drawImage(video, 0, 0);
+          
+          // Convert to blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+              setTicketFile(file);
+            }
+            
+            // Stop camera stream
+            stream.getTracks().forEach(track => track.stop());
+            setIsCapturing(false);
+          }, 'image/jpeg', 0.8);
+        }, 3000);
+      };
+    } catch (error) {
+      console.error('Camera access denied:', error);
+      setIsCapturing(false);
     }
   };
 
@@ -101,39 +144,67 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="ticket" className="text-foreground font-medium">Upload Ticket</Label>
-                    <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary transition-colors duration-300 cursor-pointer">
-                      <input
-                        id="ticket"
-                        type="file"
-                        accept="image/*,.pdf"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                        required
-                      />
-                      <label htmlFor="ticket" className="cursor-pointer">
-                        <div className="space-y-4">
-                          <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto">
-                            <Upload className="h-8 w-8 text-accent-foreground" />
+                  <div className="space-y-4">
+                    <Label className="text-foreground font-medium">Upload Ticket</Label>
+                    
+                    {/* File Upload or Camera Capture Options */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {/* File Upload */}
+                      <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary transition-colors duration-300 cursor-pointer">
+                        <input
+                          id="ticket"
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
+                        <label htmlFor="ticket" className="cursor-pointer">
+                          <div className="space-y-3">
+                            <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center mx-auto">
+                              <Upload className="h-6 w-6 text-accent-foreground" />
+                            </div>
+                            <div>
+                              <p className="text-foreground font-medium text-sm">Upload File</p>
+                              <p className="text-xs text-muted-foreground">PNG, JPG, PDF</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      {/* Camera Capture */}
+                      <div 
+                        className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary transition-colors duration-300 cursor-pointer"
+                        onClick={handleCameraCapture}
+                      >
+                        <div className="space-y-3">
+                          <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center mx-auto">
+                            <Camera className="h-6 w-6 text-accent-foreground" />
                           </div>
                           <div>
-                            <p className="text-foreground font-medium">
-                              {ticketFile ? ticketFile.name : "Click to upload or drag and drop"}
+                            <p className="text-foreground font-medium text-sm">
+                              {isCapturing ? "Capturing..." : "Take Photo"}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              PNG, JPG, PDF up to 10MB
+                            <p className="text-xs text-muted-foreground">
+                              {isCapturing ? "Get ready!" : "Use camera"}
                             </p>
                           </div>
                         </div>
-                      </label>
+                      </div>
                     </div>
+
+                    {/* Show selected file */}
+                    {ticketFile && (
+                      <div className="p-4 bg-accent/50 rounded-lg">
+                        <p className="text-sm font-medium text-foreground">Selected file:</p>
+                        <p className="text-sm text-muted-foreground">{ticketFile.name}</p>
+                      </div>
+                    )}
                   </div>
 
                   <Button 
                     type="submit" 
                     className="btn-eco w-full flex items-center justify-center space-x-2" 
-                    disabled={isProcessing}
+                    disabled={isProcessing || isCapturing || !ticketFile}
                   >
                     {isProcessing ? (
                       <>
