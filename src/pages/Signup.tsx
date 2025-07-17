@@ -110,7 +110,7 @@ const Signup = () => {
                 </Button>
                 <div className="text-center text-sm text-muted-foreground">
                   Already have an account?{" "}
-                  <Link to="/login" className="text-primary hover:underline font-medium">Sign.in</Link>
+                  <Link to="/login" className="text-primary hover:underline font-medium">Sign in</Link>
                 </div>
               </CardFooter>
             </form>
