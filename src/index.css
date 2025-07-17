@@ -2,39 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Go Green Eco-Themed Design System */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Eco-themed color palette */
+    --background: 120 20% 98%;
+    --foreground: 120 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 120 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 120 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Soft green primary colors */
+    --primary: 120 40% 35%;
+    --primary-foreground: 0 0% 98%;
+    --primary-soft: 120 35% 85%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Earthy secondary colors */
+    --secondary: 30 35% 88%;
+    --secondary-foreground: 30 25% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted pastels */
+    --muted: 120 20% 95%;
+    --muted-foreground: 120 15% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent greens */
+    --accent: 120 50% 90%;
+    --accent-foreground: 120 40% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Soft borders and inputs */
+    --border: 120 25% 88%;
+    --input: 120 25% 92%;
+    --ring: 120 40% 35%;
+
+    /* Custom eco colors */
+    --leaf-green: 110 45% 40%;
+    --forest-green: 140 50% 30%;
+    --earth-brown: 30 35% 60%;
+    --sky-blue: 200 75% 85%;
+    --nature-beige: 40 25% 90%;
+
+    /* Gradients */
+    --gradient-eco: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--leaf-green)) 50%, hsl(var(--forest-green)) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--accent)) 100%);
+    --gradient-nature: linear-gradient(45deg, hsl(var(--nature-beige)) 0%, hsl(var(--sky-blue)) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(var(--primary) / 0.1);
+    --shadow-card: 0 8px 30px -4px hsl(var(--primary) / 0.15);
+    --shadow-hover: 0 12px 40px -8px hsl(var(--primary) / 0.2);
 
     --radius: 0.5rem;
 
@@ -100,6 +122,100 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  /* Eco button variants */
+  .btn-eco {
+    @apply bg-gradient-to-r from-primary via-leaf-green to-forest-green text-primary-foreground rounded-xl px-6 py-3 font-medium shadow-card hover:shadow-hover transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-soft {
+    @apply bg-secondary text-secondary-foreground rounded-xl px-6 py-3 font-medium shadow-soft hover:shadow-card transition-all duration-300;
+  }
+
+  /* Card styles */
+  .card-eco {
+    @apply bg-card rounded-3xl shadow-card hover:shadow-hover transition-all duration-300 transform hover:scale-[1.02] border border-border/50;
+  }
+
+  .card-nature {
+    @apply bg-gradient-to-br from-nature-beige to-sky-blue rounded-3xl shadow-card hover:shadow-hover transition-all duration-300;
+  }
+
+  /* Animation classes */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-leaf-fall {
+    animation: leafFall 4s ease-in-out infinite;
+  }
+
+  .animate-gentle-bounce {
+    animation: gentleBounce 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .text-gradient-eco {
+    @apply bg-gradient-to-r from-leaf-green via-primary to-forest-green bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-eco {
+    background: var(--gradient-eco);
+  }
+
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  .bg-gradient-nature {
+    background: var(--gradient-nature);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-hover {
+    box-shadow: var(--shadow-hover);
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes leafFall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(5px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(-10px) rotate(360deg);
+  }
+}
+
+@keyframes gentleBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
   }
 }
