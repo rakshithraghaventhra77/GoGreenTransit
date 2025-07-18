@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, Target, Users, TreePine } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import heroImage from "@/assets/hero-eco-transport.jpg";
 import floatingLeaves from "@/assets/floating-leaves.png";
@@ -9,6 +10,7 @@ import communityEco from "@/assets/community-eco.png";
 import treeLogo from "@/assets/tree-logo.png";
 
 const Home = () => {
+  const { user } = useAuth();
   return (
     <div className="min-h-screen bg-gradient-soft">
       <Header />

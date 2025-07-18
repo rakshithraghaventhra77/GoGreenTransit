@@ -14,7 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          points: number
+          total_carbon_saved: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          points?: number
+          total_carbon_saved?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          points?: number
+          total_carbon_saved?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rewards: {
+        Row: {
+          id: string
+          points_cost: number
+          redeemed_at: string
+          reward_type: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          points_cost: number
+          redeemed_at?: string
+          reward_type: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          points_cost?: number
+          redeemed_at?: string
+          reward_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trips: {
+        Row: {
+          carbon_saved: number
+          created_at: string
+          distance: number | null
+          end_location: string
+          id: string
+          image_path: string | null
+          points_earned: number
+          start_location: string
+          user_id: string
+        }
+        Insert: {
+          carbon_saved?: number
+          created_at?: string
+          distance?: number | null
+          end_location: string
+          id?: string
+          image_path?: string | null
+          points_earned?: number
+          start_location: string
+          user_id: string
+        }
+        Update: {
+          carbon_saved?: number
+          created_at?: string
+          distance?: number | null
+          end_location?: string
+          id?: string
+          image_path?: string | null
+          points_earned?: number
+          start_location?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

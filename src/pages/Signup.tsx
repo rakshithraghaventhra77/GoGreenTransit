@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { TreePine, Mail, Lock, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import floatingLeaves from "@/assets/floating-leaves.png";
 import treeLogo from "@/assets/tree-logo.png";
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -14,18 +17,61 @@ const Signup = () => {
     password: "",
     confirmPassword: ""
   });
+  const [loading, setLoading] = useState(false);
+  const { signUp } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
     }));
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log("Signup attempt:", formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Password mismatch",
+        description: "Passwords do not match. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const { error } = await signUp(formData.email, formData.password);
+      
+      if (error) {
+        toast({
+          title: "Signup failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account.",
+        });
+        navigate("/login");
+      }
+    } catch (error) {
+      toast({
+        title: "Signup failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
-  return <div className="min-h-screen bg-gradient-nature relative overflow-hidden flex items-center justify-center">
+
+  return (
+    <div className="min-h-screen bg-gradient-nature relative overflow-hidden flex items-center justify-center">
       {/* Floating leaves background */}
       <div className="absolute top-10 left-10 opacity-20">
         <img src={floatingLeaves} alt="" className="w-32 h-24 animate-float" />
@@ -46,8 +92,8 @@ const Signup = () => {
           <TreePine className="h-24 w-24 text-forest-green animate-gentle-bounce" />
           <TreePine className="h-32 w-32 text-leaf-green animate-float" />
           <TreePine className="h-28 w-28 text-forest-green animate-gentle-bounce" style={{
-          animationDelay: '1s'
-        }} />
+            animationDelay: '1s'
+          }} />
         </div>
       </div>
 
@@ -76,28 +122,64 @@ const Signup = () => {
                   <Label htmlFor="name" className="text-foreground font-medium">Full Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="name" name="name" type="text" placeholder="Your full name" className="pl-10 border-border/50 focus:border-primary" value={formData.name} onChange={handleChange} required />
+                    <Input 
+                      id="name" 
+                      name="name" 
+                      type="text" 
+                      placeholder="Your full name" 
+                      className="pl-10 border-border/50 focus:border-primary" 
+                      value={formData.name} 
+                      onChange={handleChange} 
+                      required 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" name="email" type="email" placeholder="your@email.com" className="pl-10 border-border/50 focus:border-primary" value={formData.email} onChange={handleChange} required />
+                    <Input 
+                      id="email" 
+                      name="email" 
+                      type="email" 
+                      placeholder="your@email.com" 
+                      className="pl-10 border-border/50 focus:border-primary" 
+                      value={formData.email} 
+                      onChange={handleChange} 
+                      required 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="password" name="password" type="password" placeholder="••••••••" className="pl-10 border-border/50 focus:border-primary" value={formData.password} onChange={handleChange} required />
+                    <Input 
+                      id="password" 
+                      name="password" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="pl-10 border-border/50 focus:border-primary" 
+                      value={formData.password} 
+                      onChange={handleChange} 
+                      required 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-foreground font-medium">Confirm Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" className="pl-10 border-border/50 focus:border-primary" value={formData.confirmPassword} onChange={handleChange} required />
+                    <Input 
+                      id="confirmPassword" 
+                      name="confirmPassword" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="pl-10 border-border/50 focus:border-primary" 
+                      value={formData.confirmPassword} 
+                      onChange={handleChange} 
+                      required 
+                    />
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground">
@@ -105,8 +187,12 @@ const Signup = () => {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">
-                <Button type="submit" className="btn-eco w-full">
-                  Create Account
+                <Button 
+                  type="submit" 
+                  className="btn-eco w-full"
+                  disabled={loading}
+                >
+                  {loading ? "Creating account..." : "Create Account"}
                 </Button>
                 <div className="text-center text-sm text-muted-foreground">
                   Already have an account?{" "}
@@ -133,6 +219,8 @@ const Signup = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Signup;
