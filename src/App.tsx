@@ -13,6 +13,16 @@ import Rewards from "./pages/Rewards";
 import Goals from "./pages/Goals";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import DistanceReward from './components/DistanceReward';
+import CarbonReward from './components/CarbonReward';
+import TimeReward from './components/TimeReward';
+import MoneyReward from './components/MoneyReward';
+import PointsReward from './components/PointsReward';
+import BadgesReward from './components/BadgesReward';
+import AchievementsReward from './components/AchievementsReward';
+import ChallengesReward from './components/ChallengesReward';
+import LeaderboardReward from './components/LeaderboardReward';
+
 
 const queryClient = new QueryClient();
 

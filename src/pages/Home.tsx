@@ -8,6 +8,7 @@ import heroImage from "@/assets/hero-eco-transport.jpg";
 import floatingLeaves from "@/assets/floating-leaves.png";
 import communityEco from "@/assets/community-eco.png";
 import treeLogo from "@/assets/tree-logo.png";
+import DistanceReward from "../components/DistanceReward";
 
 const Home = () => {
   const { user } = useAuth();
@@ -145,6 +146,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Distance Reward Section */}
+      <DistanceReward />
 
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground py-12">

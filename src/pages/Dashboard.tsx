@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,10 @@ import {
   LogOut,
   User
 } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
+import type { LatLngExpression } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 interface UserProfile {
   points: number;
@@ -39,6 +44,24 @@ interface LeaderboardUser {
   total_carbon_saved: number;
 }
 
+// Add Mapbox autocomplete utility
+const MAPBOX_API_KEY = import.meta.env.VITE_MAPBOX_API_KEY;
+
+async function fetchPlaceSuggestions(query: string) {
+  if (!query) return [];
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_API_KEY}&autocomplete=true&limit=5`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.features || [];
+}
+
+async function reverseGeocode(lat: number, lon: number) {
+  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${MAPBOX_API_KEY}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return data.features?.[0]?.place_name || `${lat},${lon}`;
+}
+
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
@@ -57,6 +80,26 @@ const Dashboard = () => {
     ticketImage: null as File | null
   });
 
+  const [startSuggestions, setStartSuggestions] = useState<any[]>([]);
+  const [endSuggestions, setEndSuggestions] = useState<any[]>([]);
+  const [showStartSuggestions, setShowStartSuggestions] = useState(false);
+  const [showEndSuggestions, setShowEndSuggestions] = useState(false);
+
+  const [startCoords, setStartCoords] = useState<[number, number] | null>(null);
+  const [endCoords, setEndCoords] = useState<[number, number] | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
+  const [showDistancePopout, setShowDistancePopout] = useState(false);
+  const [cameraFacingMode, setCameraFacingMode] = useState<'environment' | 'user'>('environment');
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [pendingTrip, setPendingTrip] = useState<null | {
+    startLocation: string;
+    endLocation: string;
+    startCoords: [number, number];
+    endCoords: [number, number];
+    distance: number;
+    ticketImage: File;
+  }>(null);
+
   useEffect(() => {
     if (user) {
       fetchUserProfile();
@@ -64,6 +107,62 @@ const Dashboard = () => {
       fetchLeaderboard();
     }
   }, [user]);
+
+  // Haversine formula
+  function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const toRad = (x: number) => (x * Math.PI) / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  // Get coordinates from Mapbox feature
+  function getCoordsFromPlace(place: any): [number, number] {
+    return place?.center ? [place.center[1], place.center[0]] : null;
+  }
+
+  // Update coordinates and distance when locations change
+  useEffect(() => {
+    const fetchCoords = async () => {
+      if (tripData.startLocation && tripData.endLocation) {
+        // Geocode start
+        const startRes = await fetchPlaceSuggestions(tripData.startLocation);
+        const endRes = await fetchPlaceSuggestions(tripData.endLocation);
+        const start = startRes[0];
+        const end = endRes[0];
+        if (start && end) {
+          const sCoords = getCoordsFromPlace(start);
+          const eCoords = getCoordsFromPlace(end);
+          setStartCoords(sCoords);
+          setEndCoords(eCoords);
+          if (sCoords && eCoords) {
+            const dist = haversineDistance(sCoords[0], sCoords[1], eCoords[0], eCoords[1]);
+            setDistance(dist);
+            setShowDistancePopout(true);
+          } else {
+            setDistance(null);
+            setShowDistancePopout(false);
+          }
+        } else {
+          setStartCoords(null);
+          setEndCoords(null);
+          setDistance(null);
+          setShowDistancePopout(false);
+        }
+      } else {
+        setStartCoords(null);
+        setEndCoords(null);
+        setDistance(null);
+        setShowDistancePopout(false);
+      }
+    };
+    fetchCoords();
+  }, [tripData.startLocation, tripData.endLocation]);
 
   const fetchUserProfile = async () => {
     try {
@@ -121,7 +220,7 @@ const Dashboard = () => {
   const capturePhoto = async () => {
     try {
       setIsCapturing(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: cameraFacingMode } });
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -194,29 +293,67 @@ const Dashboard = () => {
       return;
     }
 
+    // Get coordinates and distance
+    const startRes = await fetchPlaceSuggestions(tripData.startLocation);
+    const endRes = await fetchPlaceSuggestions(tripData.endLocation);
+    const start = startRes[0];
+    const end = endRes[0];
+    if (!start || !end) {
+      toast({
+        title: "Invalid Locations",
+        description: "Please select valid start and end locations.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const sCoords = getCoordsFromPlace(start);
+    const eCoords = getCoordsFromPlace(end);
+    if (!sCoords || !eCoords) {
+      toast({
+        title: "Location Error",
+        description: "Could not determine coordinates for locations.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const dist = haversineDistance(sCoords[0], sCoords[1], eCoords[0], eCoords[1]);
+
+    // Show map modal with animation before saving
+    setPendingTrip({
+      startLocation: tripData.startLocation,
+      endLocation: tripData.endLocation,
+      startCoords: sCoords,
+      endCoords: eCoords,
+      distance: dist,
+      ticketImage: tripData.ticketImage!,
+    });
+    setShowMapModal(true);
+  };
+
+  // New function to actually save the trip after animation
+  const savePendingTrip = async () => {
+    if (!pendingTrip) return;
     setLoading(true);
-    
     try {
       // Upload image
-      const imagePath = await uploadTicketImage(tripData.ticketImage);
+      const imagePath = await uploadTicketImage(pendingTrip.ticketImage);
       if (!imagePath) throw new Error('Failed to upload image');
 
       // Calculate carbon saved and points
-      const carbonSaved = calculateCarbonSaved(tripData.startLocation, tripData.endLocation);
-      const pointsEarned = Math.round(carbonSaved * 10); // 10 points per kg CO2 saved
+      const carbonSaved = Math.round(pendingTrip.distance * 0.12 * 100) / 100; // 0.12 kg/km
+      const pointsEarned = Math.round(pendingTrip.distance * 10); // 10 points/km
 
       // Insert trip
       const { error: tripError } = await supabase
         .from('trips')
         .insert({
           user_id: user?.id,
-          start_location: tripData.startLocation,
-          end_location: tripData.endLocation,
+          start_location: pendingTrip.startLocation,
+          end_location: pendingTrip.endLocation,
           carbon_saved: carbonSaved,
           points_earned: pointsEarned,
           image_path: imagePath
         });
-
       if (tripError) throw tripError;
 
       // Update user profile
@@ -228,7 +365,6 @@ const Dashboard = () => {
             total_carbon_saved: userProfile.total_carbon_saved + carbonSaved
           })
           .eq('user_id', user?.id);
-
         if (profileError) throw profileError;
       }
 
@@ -239,10 +375,11 @@ const Dashboard = () => {
 
       // Reset form and refresh data
       setTripData({ startLocation: "", endLocation: "", ticketImage: null });
+      setPendingTrip(null);
+      setShowMapModal(false);
       fetchUserProfile();
       fetchTrips();
       fetchLeaderboard();
-      
     } catch (error) {
       console.error('Error submitting trip:', error);
       toast({
@@ -344,23 +481,125 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="startLocation">Start Location</Label>
-                    <Input
-                      id="startLocation"
-                      value={tripData.startLocation}
-                      onChange={(e) => setTripData(prev => ({ ...prev, startLocation: e.target.value }))}
-                      placeholder="Enter start location"
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <Input
+                        id="startLocation"
+                        value={tripData.startLocation}
+                        onChange={async (e) => {
+                          const value = e.target.value;
+                          setTripData(prev => ({ ...prev, startLocation: value }));
+                          if (value.length > 1) {
+                            const suggestions = await fetchPlaceSuggestions(value);
+                            setStartSuggestions(suggestions);
+                            setShowStartSuggestions(true);
+                          } else {
+                            setStartSuggestions([]);
+                            setShowStartSuggestions(false);
+                          }
+                        }}
+                        placeholder="Enter start location"
+                        autoComplete="off"
+                        onFocus={async (e) => {
+                          if (tripData.startLocation.length > 1) {
+                            const suggestions = await fetchPlaceSuggestions(tripData.startLocation);
+                            setStartSuggestions(suggestions);
+                            setShowStartSuggestions(true);
+                          }
+                        }}
+                        onBlur={() => setTimeout(() => setShowStartSuggestions(false), 200)}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        style={{ position: 'absolute', right: 0, top: 0, height: '100%' }}
+                        variant="outline"
+                        onClick={async () => {
+                          if (!navigator.geolocation) return;
+                          navigator.geolocation.getCurrentPosition(async (pos) => {
+                            const place = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+                            setTripData(prev => ({ ...prev, startLocation: place }));
+                          });
+                        }}
+                      >
+                        Get My Location
+                      </Button>
+                      {showStartSuggestions && startSuggestions.length > 0 && (
+                        <div style={{ position: 'absolute', zIndex: 10, background: 'white', border: '1px solid #ccc', width: '100%' }}>
+                          {startSuggestions.map((s: any) => (
+                            <div
+                              key={s.id}
+                              style={{ padding: 8, cursor: 'pointer' }}
+                              onMouseDown={() => {
+                                setTripData(prev => ({ ...prev, startLocation: s.place_name }));
+                                setShowStartSuggestions(false);
+                              }}
+                            >
+                              {s.place_name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="endLocation">End Location</Label>
-                    <Input
-                      id="endLocation"
-                      value={tripData.endLocation}
-                      onChange={(e) => setTripData(prev => ({ ...prev, endLocation: e.target.value }))}
-                      placeholder="Enter end location"
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <Input
+                        id="endLocation"
+                        value={tripData.endLocation}
+                        onChange={async (e) => {
+                          const value = e.target.value;
+                          setTripData(prev => ({ ...prev, endLocation: value }));
+                          if (value.length > 1) {
+                            const suggestions = await fetchPlaceSuggestions(value);
+                            setEndSuggestions(suggestions);
+                            setShowEndSuggestions(true);
+                          } else {
+                            setEndSuggestions([]);
+                            setShowEndSuggestions(false);
+                          }
+                        }}
+                        placeholder="Enter end location"
+                        autoComplete="off"
+                        onFocus={async (e) => {
+                          if (tripData.endLocation.length > 1) {
+                            const suggestions = await fetchPlaceSuggestions(tripData.endLocation);
+                            setEndSuggestions(suggestions);
+                            setShowEndSuggestions(true);
+                          }
+                        }}
+                        onBlur={() => setTimeout(() => setShowEndSuggestions(false), 200)}
+                      />
+                      {showEndSuggestions && endSuggestions.length > 0 && (
+                        <div style={{ position: 'absolute', zIndex: 10, background: 'white', border: '1px solid #ccc', width: '100%' }}>
+                          {endSuggestions.map((s: any) => (
+                            <div
+                              key={s.id}
+                              style={{ padding: 8, cursor: 'pointer' }}
+                              onMouseDown={() => {
+                                setTripData(prev => ({ ...prev, endLocation: s.place_name }));
+                                setShowEndSuggestions(false);
+                              }}
+                            >
+                              {s.place_name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {startCoords && endCoords && !showMapModal && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    style={{ margin: '1rem 0' }}
+                    onClick={handleSubmitTrip}
+                  >
+                    Show Route Map
+                  </Button>
+                )}
 
                 <div>
                   <Label>Ticket Image</Label>
@@ -385,6 +624,16 @@ const Dashboard = () => {
                         <Camera className="h-4 w-4 mr-2" />
                         {isCapturing ? "Capturing..." : "Take Photo"}
                       </Button>
+                      {('mediaDevices' in navigator) && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setCameraFacingMode(f => f === 'environment' ? 'user' : 'environment')}
+                          className="flex-1"
+                        >
+                          Flip Camera
+                        </Button>
+                      )}
                     </div>
                     
                     <input
@@ -523,6 +772,85 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Map modal overlay: */}
+      {showMapModal && ((pendingTrip && pendingTrip.startCoords && pendingTrip.endCoords) || (startCoords && endCoords)) && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.4)',
+          zIndex: 2000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{ position: 'relative', background: 'white', borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.15)', padding: 24, minWidth: 350, maxWidth: 600 }}>
+            <button
+              onClick={() => { setShowMapModal(false); setPendingTrip(null); }}
+              style={{ position: 'absolute', top: 12, right: 16, background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#888' }}
+              aria-label="Close map"
+            >
+              ×
+            </button>
+            <MapContainer
+              center={((pendingTrip?.startCoords || startCoords || [0, 0]) as LatLngExpression)}
+              zoom={13}
+              style={{ height: 250, width: '100%', borderRadius: 12 }}
+              scrollWheelZoom={false}
+              dragging={true}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={pendingTrip?.startCoords || startCoords}>
+                <Popup>Start</Popup>
+              </Marker>
+              <Marker position={pendingTrip?.endCoords || endCoords}>
+                <Popup>End</Popup>
+              </Marker>
+              <Polyline positions={[(pendingTrip?.startCoords || startCoords), (pendingTrip?.endCoords || endCoords)]} pathOptions={{ color: 'blue' }} />
+            </MapContainer>
+            {/* Animated popout for distance */}
+            {showDistancePopout && (
+              <div style={{
+                position: 'absolute',
+                left: '50%',
+                top: 20,
+                transform: 'translateX(-50%) scale(1)',
+                background: 'white',
+                borderRadius: 16,
+                boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+                padding: '1rem 2rem',
+                zIndex: 1000,
+                transition: 'all 0.5s cubic-bezier(.68,-0.55,.27,1.55)',
+                animation: 'popout 0.7s cubic-bezier(.68,-0.55,.27,1.55)'
+              }}>
+                <span style={{ fontWeight: 600, fontSize: 20 }}>Distance: {(pendingTrip?.distance || distance)?.toFixed(2)} km</span>
+              </div>
+            )}
+            <style>{`
+              @keyframes popout {
+                0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+                60% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+                100% { transform: translateX(-50%) scale(1); opacity: 1; }
+              }
+            `}</style>
+            {pendingTrip && (
+              <Button
+                type="button"
+                className="w-full mt-4"
+                onClick={savePendingTrip}
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Save Trip"}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
