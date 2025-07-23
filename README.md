@@ -1,22 +1,38 @@
-# Welcome to your Lovable project
+# Eco-Rewards App
 
-## Project info
+## Project Description
 
-**URL**: https://lovable.dev/projects/4e51a9f9-1637-4ce2-9a9b-ee47850dcd9e
+This project is an eco-rewards application designed to encourage and reward users for choosing environmentally friendly transportation options. The app allows users to track their eco-friendly journeys and earn rewards based on the distance they cover.
 
-## How can I edit this code?
+## Use Cases
+
+* **Individuals:** Users who want to track their environmental impact and earn rewards for sustainable travel choices.
+* **Organizations:** Companies or communities looking to promote eco-friendly transportation among their members by offering incentives.
+
+## Features
+
+* **Distance Tracking:** Record and calculate distances for various eco-friendly transportation methods (e.g., cycling, walking, public transport).
+* **Reward System:** Earn points or rewards based on tracked distances.
+* **User Dashboard:** View personal eco-impact statistics and earned rewards.
+* **Goal Setting:** Set personal eco-friendly travel goals.
+
+## Technologies Used
+
+This project is built with:
+
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+
+## How to Edit the Code
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/4e51a9f9-1637-4ce2-9a9b-ee47850dcd9e) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -50,24 +66,12 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
+## How to Deploy This Project
 
-This project is built with:
+[Instructions on how to deploy the project would go here]
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/4e51a9f9-1637-4ce2-9a9b-ee47850dcd9e) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
+## Can I connect a custom domain to my project?
 
 Yes, you can!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+[Instructions on connecting a custom domain would go here]
