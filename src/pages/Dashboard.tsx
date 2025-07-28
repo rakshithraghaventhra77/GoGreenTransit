@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
+import ConfettiAnimation from "@/components/ConfettiAnimation";
 import {
   Upload,
   Camera,
@@ -100,6 +101,7 @@ const Dashboard = () => {
   const [showDistancePopout, setShowDistancePopout] = useState(false);
   const [cameraFacingMode, setCameraFacingMode] = useState<'environment' | 'user'>('environment');
   const [showMapModal, setShowMapModal] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const [pendingTrip, setPendingTrip] = useState<null | {
     startLocation: string;
     endLocation: string;
@@ -377,8 +379,11 @@ const Dashboard = () => {
         if (profileError) throw profileError;
       }
 
+      // Trigger confetti animation
+      setShowConfetti(true);
+
       toast({
-        title: "Trip Recorded!",
+        title: "🎉 Trip Recorded!",
         description: `You earned ${pointsEarned} points and saved ${carbonSaved}kg CO₂!`,
       });
 
@@ -1179,6 +1184,12 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Confetti Animation */}
+      <ConfettiAnimation
+        trigger={showConfetti}
+        onComplete={() => setShowConfetti(false)}
+      />
     </div>
   );
 };
