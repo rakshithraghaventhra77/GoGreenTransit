@@ -849,33 +849,80 @@ const Dashboard = () => {
             </Card>
 
             {/* Recent Trips */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Trips</CardTitle>
+            <Card className="card-eco">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Calendar className="h-6 w-6 mr-3 text-blue-600" />
+                  Recent Green Journeys
+                </CardTitle>
+                <p className="text-muted-foreground mt-2">
+                  Your latest sustainable transport adventures
+                </p>
               </CardHeader>
               <CardContent>
                 {trips.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    No trips recorded yet. Upload your first ticket to get started!
-                  </p>
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <MapPin className="h-10 w-10 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No trips yet!</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Upload your first sustainable transport ticket to get started on your eco-journey.
+                    </p>
+                    <Button className="btn-eco" onClick={() => document.querySelector('input[type="file"]')?.click()}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload First Ticket
+                    </Button>
+                  </div>
                 ) : (
-                  <div className="space-y-3">
-                    {trips.map((trip) => (
-                      <div key={trip.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="font-medium">
-                            {trip.start_location} → {trip.end_location}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(trip.created_at).toLocaleDateString()}
-                          </div>
+                  <div className="space-y-4">
+                    {trips.map((trip, index) => (
+                      <div key={trip.id} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-r from-white to-green-50/30 p-6 hover:shadow-lg transition-all duration-300">
+                        {/* Trip number badge */}
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-green-100 text-green-800">
+                            Trip #{trips.length - index}
+                          </Badge>
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium text-green-600">
-                            +{trip.points_earned} points
+
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-3">
+                              <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                              <span className="font-semibold text-foreground">{trip.start_location}</span>
+                            </div>
+                            <div className="flex items-center mb-4 ml-6">
+                              <div className="w-px h-8 bg-gradient-to-b from-green-500 to-blue-500 mr-3"></div>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                              <span className="font-semibold text-foreground">{trip.end_location}</span>
+                            </div>
+
+                            <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
+                              <div className="flex items-center">
+                                <Calendar className="h-4 w-4 mr-1" />
+                                {new Date(trip.created_at).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {trip.carbon_saved}kg CO₂ saved
+
+                          <div className="text-right ml-6">
+                            <div className="flex items-center justify-end mb-2">
+                              <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
+                              <span className="text-2xl font-bold text-green-600">+{trip.points_earned}</span>
+                            </div>
+                            <div className="text-sm text-muted-foreground mb-3">points earned</div>
+
+                            <div className="flex items-center justify-end">
+                              <Leaf className="h-4 w-4 mr-2 text-green-500" />
+                              <span className="font-semibold text-green-600">{trip.carbon_saved}kg CO₂</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground">carbon saved</div>
                           </div>
                         </div>
                       </div>
@@ -887,62 +934,166 @@ const Dashboard = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Progress Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Monthly Progress</CardTitle>
+          <div className="space-y-8">
+            {/* Quick Stats */}
+            <Card className="card-eco">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
+                  Quick Stats
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Points Goal</span>
-                      <span>{userProfile?.points || 0}/1000</span>
-                    </div>
-                    <Progress value={(userProfile?.points || 0) / 10} className="h-2" />
+              <CardContent className="space-y-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <Trophy className="h-8 w-8 text-white" />
                   </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>CO₂ Goal</span>
-                      <span>{userProfile?.total_carbon_saved || 0}/50kg</span>
-                    </div>
-                    <Progress value={(userProfile?.total_carbon_saved || 0) * 2} className="h-2" />
+                  <div className="text-3xl font-bold text-foreground">{userProfile?.points || 0}</div>
+                  <div className="text-sm text-muted-foreground">Total Points</div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl">
+                    <Leaf className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                    <div className="text-lg font-bold text-green-800">{userProfile?.total_carbon_saved || 0}kg</div>
+                    <div className="text-xs text-green-600">CO₂ Saved</div>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-100 rounded-xl">
+                    <MapPin className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+                    <div className="text-lg font-bold text-blue-800">{trips.length}</div>
+                    <div className="text-xs text-blue-600">Green Trips</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Monthly Goals */}
+            <Card className="card-eco">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Target className="h-5 w-5 mr-2 text-blue-500" />
+                  Monthly Goals
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium flex items-center">
+                      <Trophy className="h-4 w-4 mr-2 text-yellow-500" />
+                      Points Goal
+                    </span>
+                    <span className="text-sm font-bold">{userProfile?.points || 0}/1000</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={(userProfile?.points || 0) / 10} className="h-3 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {Math.round(((userProfile?.points || 0) / 1000) * 100)}% complete
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium flex items-center">
+                      <Leaf className="h-4 w-4 mr-2 text-green-500" />
+                      CO₂ Goal
+                    </span>
+                    <span className="text-sm font-bold">{userProfile?.total_carbon_saved || 0}/50kg</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={(userProfile?.total_carbon_saved || 0) * 2} className="h-3 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {Math.round(((userProfile?.total_carbon_saved || 0) / 50) * 100)}% complete
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-blue-500" />
+                      Trip Goal
+                    </span>
+                    <span className="text-sm font-bold">{trips.length}/20</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={(trips.length / 20) * 100} className="h-3 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {Math.round((trips.length / 20) * 100)}% complete
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Leaderboard */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="h-5 w-5 mr-2" />
-                  Leaderboard
+            <Card className="card-eco">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-purple-500" />
+                  Top Eco Warriors
                 </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  See how you rank among green champions
+                </p>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {leaderboard.map((user, index) => (
-                    <div key={user.email} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <Badge variant={index === 0 ? "default" : "secondary"}>
-                          #{index + 1}
-                        </Badge>
-                        <div>
-                          <div className="font-medium text-sm">
-                            {user.email.split('@')[0]}
+                <div className="space-y-4">
+                  {leaderboard.map((boardUser, index) => {
+                    const isCurrentUser = boardUser.email === user?.email;
+                    const position = index + 1;
+
+                    return (
+                      <div key={boardUser.email} className={`relative rounded-xl p-4 transition-all duration-300 ${
+                        isCurrentUser
+                          ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 shadow-lg'
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className={`relative w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                              position === 1 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' :
+                              position === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' :
+                              position === 3 ? 'bg-gradient-to-br from-orange-400 to-red-500 text-white' :
+                              'bg-gradient-to-br from-blue-400 to-purple-500 text-white'
+                            }`}>
+                              {position <= 3 && (
+                                <div className="absolute -top-1 -right-1">
+                                  {position === 1 && <Star className="h-4 w-4 text-yellow-400 fill-current" />}
+                                  {position === 2 && <Award className="h-4 w-4 text-gray-300 fill-current" />}
+                                  {position === 3 && <Trophy className="h-4 w-4 text-orange-400 fill-current" />}
+                                </div>
+                              )}
+                              #{position}
+                            </div>
+                            <div>
+                              <div className={`font-semibold ${
+                                isCurrentUser ? 'text-green-800' : 'text-foreground'
+                              }`}>
+                                {boardUser.email.split('@')[0]}
+                                {isCurrentUser && <span className="ml-2 text-xs">(You!)</span>}
+                              </div>
+                              <div className="flex items-center text-sm text-muted-foreground">
+                                <Leaf className="h-3 w-3 mr-1 text-green-500" />
+                                {boardUser.total_carbon_saved}kg CO₂ saved
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {user.total_carbon_saved}kg CO₂
+                          <div className="text-right">
+                            <div className={`text-xl font-bold ${
+                              isCurrentUser ? 'text-green-700' : 'text-green-600'
+                            }`}>
+                              {boardUser.points}
+                            </div>
+                            <div className="text-xs text-muted-foreground">points</div>
                           </div>
                         </div>
                       </div>
-                      <div className="font-bold text-green-600">
-                        {user.points}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
