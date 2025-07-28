@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Home, BarChart3, Gift, Menu, X, User, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import treeLogo from "@/assets/tree-logo.png";
+
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,7 +26,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:scale-105 transition-transform duration-300">
-            <img src={treeLogo} alt="Go Green" className="h-8 w-8" />
+            <img src="/tree-logo.png" alt="Go Green" className="h-8 w-8" />
             <span className="text-xl font-bold text-gradient-eco">Go Green</span>
           </Link>
 
