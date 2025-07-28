@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Calendar, TrendingUp, Award, MapPin, Github, Twitter, Mail } from "lucide-react";
 import Header from "@/components/Header";
-import communityEco from "@/assets/community-eco.png";
+
 
 const Rewards = () => {
   const streakData = {
@@ -243,7 +243,7 @@ const Rewards = () => {
                 </div>
                 <div>
                   <img 
-                    src={communityEco} 
+                    src="/community-eco.png" 
                     alt="Go Green Community" 
                     className="w-full h-auto rounded-2xl shadow-card"
                   />
