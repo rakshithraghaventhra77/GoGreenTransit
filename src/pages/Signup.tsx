@@ -7,8 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { TreePine, Mail, Lock, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import floatingLeaves from "@/assets/floating-leaves.png";
-import treeLogo from "@/assets/tree-logo.png";
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -74,16 +73,16 @@ const Signup = () => {
     <div className="min-h-screen bg-gradient-nature relative overflow-hidden flex items-center justify-center">
       {/* Floating leaves background */}
       <div className="absolute top-10 left-10 opacity-20">
-        <img src={floatingLeaves} alt="" className="w-32 h-24 animate-float" />
+        <img src="/floating-leaves.png" alt="" className="w-32 h-24 animate-float" />
       </div>
       <div className="absolute top-32 right-20 opacity-15">
-        <img src={floatingLeaves} alt="" className="w-24 h-18 animate-leaf-fall" />
+        <img src="/floating-leaves.png" alt="" className="w-24 h-18 animate-leaf-fall" />
       </div>
       <div className="absolute bottom-20 left-1/4 opacity-25">
-        <img src={floatingLeaves} alt="" className="w-28 h-20 animate-float" />
+        <img src="/floating-leaves.png" alt="" className="w-28 h-20 animate-float" />
       </div>
       <div className="absolute bottom-32 right-10 opacity-20">
-        <img src={floatingLeaves} alt="" className="w-20 h-15 animate-leaf-fall" />
+        <img src="/floating-leaves.png" alt="" className="w-20 h-15 animate-leaf-fall" />
       </div>
 
       {/* Animated trees */}
@@ -102,7 +101,7 @@ const Signup = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex items-center space-x-3 hover:scale-105 transition-transform duration-300">
-              <img src={treeLogo} alt="Go Green" className="h-12 w-12" />
+              <img src="/tree-logo.png" alt="Go Green" className="h-12 w-12" />
               <span className="text-3xl font-bold text-gradient-eco">Go Green</span>
             </Link>
             <p className="text-muted-foreground mt-2">Join the sustainable transport revolution</p>
