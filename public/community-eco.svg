@@ -1,0 +1,43 @@
+<svg width="320" height="180" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="communityGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.1"/>
+      <stop offset="50%" stop-color="#3481f6" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#a755f7" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="320" height="180" rx="12" fill="url(#communityGradient)"/>
+  
+  <!-- Bus -->
+  <rect x="20" y="80" width="80" height="40" rx="8" fill="#10b981" opacity="0.8"/>
+  <circle cx="35" cy="130" r="8" fill="#256678"/>
+  <circle cx="85" cy="130" r="8" fill="#256678"/>
+  <rect x="30" y="90" width="12" height="16" rx="2" fill="#6366f1" opacity="0.6"/>
+  <rect x="50" y="90" width="12" height="16" rx="2" fill="#6366f1" opacity="0.6"/>
+  <rect x="70" y="90" width="12" height="16" rx="2" fill="#6366f1" opacity="0.6"/>
+  
+  <!-- People in community -->
+  <circle cx="140" cy="60" r="12" fill="#10b981" opacity="0.7"/>
+  <rect x="132" y="70" width="16" height="30" rx="8" fill="#10b981" opacity="0.6"/>
+  
+  <circle cx="180" cy="50" r="10" fill="#3481f6" opacity="0.7"/>
+  <rect x="174" y="60" width="12" height="25" rx="6" fill="#3481f6" opacity="0.6"/>
+  
+  <circle cx="220" cy="70" r="10" fill="#a755f7" opacity="0.7"/>
+  <rect x="214" y="80" width="12" height="25" rx="6" fill="#a755f7" opacity="0.6"/>
+  
+  <!-- Bike -->
+  <circle cx="270" cy="120" r="15" fill="none" stroke="#10996e" stroke-width="3" opacity="0.8"/>
+  <circle cx="295" cy="120" r="15" fill="none" stroke="#10996e" stroke-width="3" opacity="0.8"/>
+  <line x1="270" y1="120" x2="295" y2="120" stroke="#10b981" stroke-width="3" opacity="0.8"/>
+  <line x1="282" y1="105" x2="282" y2="135" stroke="#10b981" stroke-width="3" opacity="0.8"/>
+  
+  <!-- Trees -->
+  <circle cx="40" cy="40" r="18" fill="#099f68" opacity="0.5"/>
+  <rect x="37" y="55" width="6" height="20" fill="#92400d" opacity="0.6"/>
+  
+  <circle cx="290" cy="50" r="20" fill="#099f68" opacity="0.5"/>
+  <rect x="287" y="68" width="6" height="22" fill="#92400d" opacity="0.6"/>
+</svg>
