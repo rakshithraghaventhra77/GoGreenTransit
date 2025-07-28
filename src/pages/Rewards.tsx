@@ -243,7 +243,7 @@ const Rewards = () => {
                 </div>
                 <div>
                   <img 
-                    src="/community-eco.png" 
+                    src="/community-eco.svg" 
                     alt="Go Green Community" 
                     className="w-full h-auto rounded-2xl shadow-card"
                   />
