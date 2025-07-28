@@ -26,7 +26,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:scale-105 transition-transform duration-300">
-            <img src="/tree-logo.png" alt="Go Green" className="h-8 w-8" />
+            <img src="/tree-logo.svg" alt="Go Green" className="h-8 w-8" />
             <span className="text-xl font-bold text-gradient-eco">Go Green</span>
           </Link>
 
