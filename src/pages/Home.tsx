@@ -17,7 +17,7 @@ const Home = () => {
       <section
         className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-blue-50"
         style={{
-          backgroundImage: `url(/hero-eco-transport.jpg)`,
+          backgroundImage: `url(/hero-eco-transport.svg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlendMode: 'overlay'
@@ -47,7 +47,7 @@ const Home = () => {
               <div className="flex justify-center mb-8">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-eco rounded-full blur-lg opacity-30 animate-pulse"></div>
-                  <img src="/tree-logo.png" alt="Go Green" className="h-24 w-24 relative z-10 animate-gentle-bounce" />
+                  <img src="/tree-logo.svg" alt="Go Green" className="h-24 w-24 relative z-10 animate-gentle-bounce" />
                 </div>
               </div>
               <h1 className="text-6xl md:text-8xl font-bold text-gradient-eco mb-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
@@ -180,7 +180,7 @@ const Home = () => {
                     </div>
                     <h3 className="text-3xl font-bold text-foreground mb-6">About Us</h3>
                     <div className="mb-6 rounded-2xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                      <img src="/community-eco.png" alt="Community" className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src="/community-eco.svg" alt="Community" className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <p className="text-muted-foreground leading-relaxed text-lg">
                       Learn about our team, mission, and how we're building a sustainable future through community-driven transport solutions.
@@ -258,7 +258,7 @@ const Home = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              <img src="/tree-logo.png" alt="Go Green" className="h-8 w-8" />
+              <img src="/tree-logo.svg" alt="Go Green" className="h-8 w-8" />
               <span className="text-xl font-bold">Go Green</span>
             </div>
             <div className="text-sm text-primary-foreground/80">
