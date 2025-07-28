@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, Leaf, Users, TrendingDown, TreePine, Recycle } from "lucide-react";
 import Header from "@/components/Header";
-import heroImage from "@/assets/hero-eco-transport.jpg";
+
 
 const Goals = () => {
   const goals = [
@@ -43,7 +43,7 @@ const Goals = () => {
       <section 
         className="relative overflow-hidden bg-gradient-nature py-20"
         style={{
-          backgroundImage: `url(${heroImage})`,
+          backgroundImage: `url(/hero-eco-transport.jpg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlendMode: 'overlay'
