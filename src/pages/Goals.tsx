@@ -43,7 +43,7 @@ const Goals = () => {
       <section 
         className="relative overflow-hidden bg-gradient-nature py-20"
         style={{
-          backgroundImage: `url(/hero-eco-transport.jpg)`,
+          backgroundImage: `url(/hero-eco-transport.svg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundBlendMode: 'overlay'
