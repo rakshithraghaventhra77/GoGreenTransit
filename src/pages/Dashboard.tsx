@@ -9,15 +9,25 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Upload, 
-  Camera, 
-  MapPin, 
-  Leaf, 
-  Trophy, 
+import Header from "@/components/Header";
+import ConfettiAnimation from "@/components/ConfettiAnimation";
+import {
+  Upload,
+  Camera,
+  MapPin,
+  Leaf,
+  Trophy,
   Users,
   LogOut,
-  User
+  User,
+  Target,
+  Award,
+  TrendingUp,
+  Calendar,
+  Zap,
+  CheckCircle,
+  Star,
+  Sparkles
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import type { LatLngExpression } from 'leaflet';
@@ -91,6 +101,7 @@ const Dashboard = () => {
   const [showDistancePopout, setShowDistancePopout] = useState(false);
   const [cameraFacingMode, setCameraFacingMode] = useState<'environment' | 'user'>('environment');
   const [showMapModal, setShowMapModal] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const [pendingTrip, setPendingTrip] = useState<null | {
     startLocation: string;
     endLocation: string;
@@ -368,8 +379,11 @@ const Dashboard = () => {
         if (profileError) throw profileError;
       }
 
+      // Trigger confetti animation
+      setShowConfetti(true);
+
       toast({
-        title: "Trip Recorded!",
+        title: "🎉 Trip Recorded!",
         description: `You earned ${pointsEarned} points and saved ${carbonSaved}kg CO₂!`,
       });
 
@@ -396,91 +410,243 @@ const Dashboard = () => {
     await signOut();
   };
 
+  // Circular progress component
+  const CircularProgress = ({ value, max, label, color = "green", size = "lg" }) => {
+    const percentage = (value / max) * 100;
+    const circumference = 2 * Math.PI * 45;
+    const strokeDasharray = circumference;
+    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+    const sizeClasses = {
+      sm: "w-20 h-20",
+      md: "w-24 h-24",
+      lg: "w-32 h-32",
+      xl: "w-40 h-40"
+    };
+
+    const colorClasses = {
+      green: "stroke-green-500",
+      blue: "stroke-blue-500",
+      purple: "stroke-purple-500",
+      orange: "stroke-orange-500"
+    };
+
+    return (
+      <div className={`relative ${sizeClasses[size]}`}>
+        <svg className="transform -rotate-90 w-full h-full">
+          <circle
+            cx="50%"
+            cy="50%"
+            r="45"
+            stroke="currentColor"
+            strokeWidth="8"
+            fill="transparent"
+            className="text-gray-200"
+          />
+          <circle
+            cx="50%"
+            cy="50%"
+            r="45"
+            stroke="currentColor"
+            strokeWidth="8"
+            fill="transparent"
+            strokeDasharray={strokeDasharray}
+            strokeDashoffset={strokeDashoffset}
+            className={`${colorClasses[color]} transition-all duration-1000 ease-out`}
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-foreground">{value}</div>
+            <div className="text-xs text-muted-foreground font-medium">{label}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-3">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Go Green Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-blue-50">
+      <Header />
+
+      {/* Welcome Banner */}
+      <div className="bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-10 right-20 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute bottom-10 left-20 w-24 h-24 bg-white/10 rounded-full blur-lg animate-bounce"></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome back, {user?.email?.split('@')[0]}!</h1>
+              <p className="text-green-100 text-xl">Ready to make another positive impact today?</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
-                <User className="h-4 w-4 mr-2" />
-                Profile
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+            <div className="mt-6 md:mt-0">
+              <div className="flex items-center space-x-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{userProfile?.points || 0}</div>
+                  <div className="text-green-100 text-sm">Total Points</div>
+                </div>
+                <div className="w-px h-12 bg-white/30"></div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{userProfile?.total_carbon_saved || 0}kg</div>
+                  <div className="text-green-100 text-sm">CO₂ Saved</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center">
-                    <Trophy className="h-4 w-4 mr-2 text-yellow-500" />
-                    Points
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    {userProfile?.points || 0}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center">
-                    <Leaf className="h-4 w-4 mr-2 text-green-500" />
-                    CO₂ Saved
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    {userProfile?.total_carbon_saved || 0}kg
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-blue-500" />
-                    Trips
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    {trips.length}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Ticket Upload */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Upload className="h-5 w-5 mr-2" />
-                  Record Your Trip
+          <div className="lg:col-span-2 space-y-8">
+            {/* Progress Overview */}
+            <Card className="card-eco">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <TrendingUp className="h-6 w-6 mr-3 text-green-600" />
+                  Your Impact Dashboard
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="text-center">
+                    <CircularProgress
+                      value={userProfile?.points || 0}
+                      max={1000}
+                      label="Points"
+                      color="green"
+                      size="lg"
+                    />
+                    <div className="mt-4">
+                      <div className="text-sm text-muted-foreground">Monthly Goal: 1,000 points</div>
+                      <Badge className="mt-2 bg-green-100 text-green-800">
+                        <Trophy className="h-3 w-3 mr-1" />
+                        {Math.round(((userProfile?.points || 0) / 1000) * 100)}% Complete
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <CircularProgress
+                      value={userProfile?.total_carbon_saved || 0}
+                      max={50}
+                      label="CO₂ kg"
+                      color="blue"
+                      size="lg"
+                    />
+                    <div className="mt-4">
+                      <div className="text-sm text-muted-foreground">Monthly Goal: 50kg CO₂</div>
+                      <Badge className="mt-2 bg-blue-100 text-blue-800">
+                        <Leaf className="h-3 w-3 mr-1" />
+                        {Math.round(((userProfile?.total_carbon_saved || 0) / 50) * 100)}% Complete
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <CircularProgress
+                      value={trips.length}
+                      max={20}
+                      label="Trips"
+                      color="purple"
+                      size="lg"
+                    />
+                    <div className="mt-4">
+                      <div className="text-sm text-muted-foreground">Monthly Goal: 20 trips</div>
+                      <Badge className="mt-2 bg-purple-100 text-purple-800">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {Math.round((trips.length / 20) * 100)}% Complete
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Achievement Badges */}
+                <div className="mt-8 pt-6 border-t border-border">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center">
+                    <Award className="h-5 w-5 mr-2 text-yellow-500" />
+                    Recent Achievements
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {(userProfile?.points || 0) >= 100 && (
+                      <Badge className="bg-yellow-100 text-yellow-800 px-3 py-2">
+                        <Star className="h-4 w-4 mr-1" />
+                        First 100 Points
+                      </Badge>
+                    )}
+                    {trips.length >= 5 && (
+                      <Badge className="bg-green-100 text-green-800 px-3 py-2">
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        5 Green Trips
+                      </Badge>
+                    )}
+                    {(userProfile?.total_carbon_saved || 0) >= 10 && (
+                      <Badge className="bg-blue-100 text-blue-800 px-3 py-2">
+                        <Leaf className="h-4 w-4 mr-1" />
+                        Eco Warrior
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Trip Recording */}
+            <Card className="card-eco">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Zap className="h-6 w-6 mr-3 text-green-600" />
+                  Record Your Green Journey
+                </CardTitle>
+                <p className="text-muted-foreground mt-2">
+                  Upload your sustainable transport ticket and earn rewards!
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Trip Form Steps */}
+                <div className="flex items-center justify-center mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                        tripData.startLocation ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
+                      }`}>
+                        1
+                      </div>
+                      <span className="ml-2 text-sm font-medium">Locations</span>
+                    </div>
+                    <div className={`w-8 h-1 rounded ${
+                      tripData.startLocation && tripData.endLocation ? 'bg-green-500' : 'bg-gray-200'
+                    }`}></div>
+                    <div className="flex items-center">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                        tripData.ticketImage ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
+                      }`}>
+                        2
+                      </div>
+                      <span className="ml-2 text-sm font-medium">Upload Ticket</span>
+                    </div>
+                    <div className={`w-8 h-1 rounded ${
+                      tripData.startLocation && tripData.endLocation && tripData.ticketImage ? 'bg-green-500' : 'bg-gray-200'
+                    }`}></div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-sm font-bold">
+                        3
+                      </div>
+                      <span className="ml-2 text-sm font-medium">Submit</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="startLocation">Start Location</Label>
+                    <Label htmlFor="startLocation" className="text-base font-semibold flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                      Start Location
+                    </Label>
                     <div style={{ position: 'relative' }}>
                       <Input
                         id="startLocation"
@@ -542,7 +708,10 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="endLocation">End Location</Label>
+                    <Label htmlFor="endLocation" className="text-base font-semibold flex items-center">
+                      <Target className="h-4 w-4 mr-2 text-blue-600" />
+                      End Location
+                    </Label>
                     <div style={{ position: 'relative' }}>
                       <Input
                         id="endLocation"
@@ -602,7 +771,10 @@ const Dashboard = () => {
                 )}
 
                 <div>
-                  <Label>Ticket Image</Label>
+                  <Label className="text-base font-semibold flex items-center">
+                    <Camera className="h-4 w-4 mr-2 text-purple-600" />
+                    Ticket Image
+                  </Label>
                   <div className="mt-2 space-y-2">
                     <div className="flex gap-2">
                       <Button
@@ -661,44 +833,101 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <Button 
-                  onClick={handleSubmitTrip} 
+                <Button
+                  onClick={handleSubmitTrip}
                   disabled={loading || !tripData.startLocation || !tripData.endLocation || !tripData.ticketImage}
-                  className="w-full"
+                  className="w-full btn-eco text-lg py-6 rounded-2xl"
                 >
-                  {loading ? "Recording Trip..." : "Record Trip"}
+                  {loading ? (
+                    <>
+                      <Sparkles className="h-5 w-5 mr-2 animate-spin" />
+                      Recording Trip...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="h-5 w-5 mr-2" />
+                      Record Green Trip
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
 
             {/* Recent Trips */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Trips</CardTitle>
+            <Card className="card-eco">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Calendar className="h-6 w-6 mr-3 text-blue-600" />
+                  Recent Green Journeys
+                </CardTitle>
+                <p className="text-muted-foreground mt-2">
+                  Your latest sustainable transport adventures
+                </p>
               </CardHeader>
               <CardContent>
                 {trips.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    No trips recorded yet. Upload your first ticket to get started!
-                  </p>
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-200 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <MapPin className="h-10 w-10 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">No trips yet!</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Upload your first sustainable transport ticket to get started on your eco-journey.
+                    </p>
+                    <Button className="btn-eco" onClick={() => document.querySelector('input[type="file"]')?.click()}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload First Ticket
+                    </Button>
+                  </div>
                 ) : (
-                  <div className="space-y-3">
-                    {trips.map((trip) => (
-                      <div key={trip.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="font-medium">
-                            {trip.start_location} → {trip.end_location}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {new Date(trip.created_at).toLocaleDateString()}
-                          </div>
+                  <div className="space-y-4">
+                    {trips.map((trip, index) => (
+                      <div key={trip.id} className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-r from-white to-green-50/30 p-6 hover:shadow-lg transition-all duration-300">
+                        {/* Trip number badge */}
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-green-100 text-green-800">
+                            Trip #{trips.length - index}
+                          </Badge>
                         </div>
-                        <div className="text-right">
-                          <div className="font-medium text-green-600">
-                            +{trip.points_earned} points
+
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center mb-3">
+                              <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                              <span className="font-semibold text-foreground">{trip.start_location}</span>
+                            </div>
+                            <div className="flex items-center mb-4 ml-6">
+                              <div className="w-px h-8 bg-gradient-to-b from-green-500 to-blue-500 mr-3"></div>
+                            </div>
+                            <div className="flex items-center">
+                              <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                              <span className="font-semibold text-foreground">{trip.end_location}</span>
+                            </div>
+
+                            <div className="flex items-center mt-4 space-x-4 text-sm text-muted-foreground">
+                              <div className="flex items-center">
+                                <Calendar className="h-4 w-4 mr-1" />
+                                {new Date(trip.created_at).toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {trip.carbon_saved}kg CO₂ saved
+
+                          <div className="text-right ml-6">
+                            <div className="flex items-center justify-end mb-2">
+                              <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
+                              <span className="text-2xl font-bold text-green-600">+{trip.points_earned}</span>
+                            </div>
+                            <div className="text-sm text-muted-foreground mb-3">points earned</div>
+
+                            <div className="flex items-center justify-end">
+                              <Leaf className="h-4 w-4 mr-2 text-green-500" />
+                              <span className="font-semibold text-green-600">{trip.carbon_saved}kg CO₂</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground">carbon saved</div>
                           </div>
                         </div>
                       </div>
@@ -710,62 +939,166 @@ const Dashboard = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Progress Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Monthly Progress</CardTitle>
+          <div className="space-y-8">
+            {/* Quick Stats */}
+            <Card className="card-eco">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
+                  Quick Stats
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>Points Goal</span>
-                      <span>{userProfile?.points || 0}/1000</span>
-                    </div>
-                    <Progress value={(userProfile?.points || 0) / 10} className="h-2" />
+              <CardContent className="space-y-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <Trophy className="h-8 w-8 text-white" />
                   </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span>CO₂ Goal</span>
-                      <span>{userProfile?.total_carbon_saved || 0}/50kg</span>
-                    </div>
-                    <Progress value={(userProfile?.total_carbon_saved || 0) * 2} className="h-2" />
+                  <div className="text-3xl font-bold text-foreground">{userProfile?.points || 0}</div>
+                  <div className="text-sm text-muted-foreground">Total Points</div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl">
+                    <Leaf className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                    <div className="text-lg font-bold text-green-800">{userProfile?.total_carbon_saved || 0}kg</div>
+                    <div className="text-xs text-green-600">CO₂ Saved</div>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-100 rounded-xl">
+                    <MapPin className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+                    <div className="text-lg font-bold text-blue-800">{trips.length}</div>
+                    <div className="text-xs text-blue-600">Green Trips</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Monthly Goals */}
+            <Card className="card-eco">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Target className="h-5 w-5 mr-2 text-blue-500" />
+                  Monthly Goals
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium flex items-center">
+                      <Trophy className="h-4 w-4 mr-2 text-yellow-500" />
+                      Points Goal
+                    </span>
+                    <span className="text-sm font-bold">{userProfile?.points || 0}/1000</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={(userProfile?.points || 0) / 10} className="h-3 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {Math.round(((userProfile?.points || 0) / 1000) * 100)}% complete
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium flex items-center">
+                      <Leaf className="h-4 w-4 mr-2 text-green-500" />
+                      CO₂ Goal
+                    </span>
+                    <span className="text-sm font-bold">{userProfile?.total_carbon_saved || 0}/50kg</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={(userProfile?.total_carbon_saved || 0) * 2} className="h-3 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {Math.round(((userProfile?.total_carbon_saved || 0) / 50) * 100)}% complete
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-blue-500" />
+                      Trip Goal
+                    </span>
+                    <span className="text-sm font-bold">{trips.length}/20</span>
+                  </div>
+                  <div className="relative">
+                    <Progress value={(trips.length / 20) * 100} className="h-3 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full opacity-20"></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {Math.round((trips.length / 20) * 100)}% complete
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Leaderboard */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="h-5 w-5 mr-2" />
-                  Leaderboard
+            <Card className="card-eco">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-purple-500" />
+                  Top Eco Warriors
                 </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  See how you rank among green champions
+                </p>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {leaderboard.map((user, index) => (
-                    <div key={user.email} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <Badge variant={index === 0 ? "default" : "secondary"}>
-                          #{index + 1}
-                        </Badge>
-                        <div>
-                          <div className="font-medium text-sm">
-                            {user.email.split('@')[0]}
+                <div className="space-y-4">
+                  {leaderboard.map((boardUser, index) => {
+                    const isCurrentUser = boardUser.email === user?.email;
+                    const position = index + 1;
+
+                    return (
+                      <div key={boardUser.email} className={`relative rounded-xl p-4 transition-all duration-300 ${
+                        isCurrentUser
+                          ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 shadow-lg'
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className={`relative w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                              position === 1 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' :
+                              position === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' :
+                              position === 3 ? 'bg-gradient-to-br from-orange-400 to-red-500 text-white' :
+                              'bg-gradient-to-br from-blue-400 to-purple-500 text-white'
+                            }`}>
+                              {position <= 3 && (
+                                <div className="absolute -top-1 -right-1">
+                                  {position === 1 && <Star className="h-4 w-4 text-yellow-400 fill-current" />}
+                                  {position === 2 && <Award className="h-4 w-4 text-gray-300 fill-current" />}
+                                  {position === 3 && <Trophy className="h-4 w-4 text-orange-400 fill-current" />}
+                                </div>
+                              )}
+                              #{position}
+                            </div>
+                            <div>
+                              <div className={`font-semibold ${
+                                isCurrentUser ? 'text-green-800' : 'text-foreground'
+                              }`}>
+                                {boardUser.email.split('@')[0]}
+                                {isCurrentUser && <span className="ml-2 text-xs">(You!)</span>}
+                              </div>
+                              <div className="flex items-center text-sm text-muted-foreground">
+                                <Leaf className="h-3 w-3 mr-1 text-green-500" />
+                                {boardUser.total_carbon_saved}kg CO₂ saved
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {user.total_carbon_saved}kg CO₂
+                          <div className="text-right">
+                            <div className={`text-xl font-bold ${
+                              isCurrentUser ? 'text-green-700' : 'text-green-600'
+                            }`}>
+                              {boardUser.points}
+                            </div>
+                            <div className="text-xs text-muted-foreground">points</div>
                           </div>
                         </div>
                       </div>
-                      <div className="font-bold text-green-600">
-                        {user.points}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -851,6 +1184,12 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Confetti Animation */}
+      <ConfettiAnimation
+        trigger={showConfetti}
+        onComplete={() => setShowConfetti(false)}
+      />
     </div>
   );
 };
