@@ -62,13 +62,13 @@ const About = () => {
       {/* Hero Section */}
       <section className="py-20 bg-gradient-nature relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src="/community-eco.png" alt="" className="w-full h-full object-cover" />
+          <img src="/community-eco.svg" alt="" className="w-full h-full object-cover" />
         </div>
         
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex justify-center mb-6">
-              <img src="/tree-logo.png" alt="Go Green" className="h-20 w-20 animate-gentle-bounce" />
+              <img src="/tree-logo.svg" alt="Go Green" className="h-20 w-20 animate-gentle-bounce" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gradient-eco mb-6">
               About Go Green
@@ -114,7 +114,7 @@ const About = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-eco rounded-3xl transform rotate-3"></div>
                 <img 
-                  src="/community-eco.png" 
+                  src="/community-eco.svg" 
                   alt="Go Green Community" 
                   className="relative w-full h-auto rounded-3xl shadow-card"
                 />
