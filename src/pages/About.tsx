@@ -146,21 +146,31 @@ const About = () => {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gradient-eco mb-4">Meet Our Team</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                The passionate individuals working to make sustainable transport accessible and rewarding for everyone.
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                Meet the student founders who are passionate about bringing innovative sustainable transport solutions to life through technology and community impact.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
               {teamMembers.map((member, index) => (
-                <Card key={index} className="card-eco text-center group hover:scale-105 transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Card key={index} className="card-eco text-center group hover:scale-105 transition-all duration-500 relative overflow-hidden">
+                  {/* Background gradient effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-emerald-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                  <CardContent className="p-8 relative z-10">
+                    <div className="text-7xl mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
                       {member.emoji}
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-1">{member.name}</h3>
-                    <p className="text-primary font-medium mb-3">{member.role}</p>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{member.description}</p>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{member.name}</h3>
+                    <p className="text-primary font-semibold mb-4 text-lg">{member.role}</p>
+                    <p className="text-muted-foreground leading-relaxed">{member.description}</p>
+
+                    {/* Student badge */}
+                    <div className="mt-6">
+                      <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2">
+                        🎓 Student Founder
+                      </Badge>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
