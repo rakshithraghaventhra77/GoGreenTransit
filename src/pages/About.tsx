@@ -7,28 +7,16 @@ import Header from "@/components/Header";
 const About = () => {
   const teamMembers = [
     {
-      name: "Alex Rivera",
-      role: "Founder & CEO",
-      description: "Environmental engineer passionate about sustainable transportation solutions.",
-      emoji: "🌱"
+      name: "Rakshith Raghaventhra L",
+      role: "Co-Founder & Lead Developer",
+      description: "Computer Science student passionate about building innovative solutions for environmental sustainability. Leading the technical development and bringing the Go Green vision to life.",
+      emoji: "👨‍💻"
     },
     {
-      name: "Sarah Chen",
-      role: "Head of Community",
-      description: "Community builder focused on creating meaningful connections between eco-warriors.",
-      emoji: "🤝"
-    },
-    {
-      name: "Marcus Johnson",
-      role: "Tech Lead",
-      description: "Full-stack developer building scalable solutions for environmental impact tracking.",
-      emoji: "💻"
-    },
-    {
-      name: "Elena Popova",
-      role: "UX Designer",
-      description: "Designer creating intuitive experiences that encourage sustainable behavior change.",
-      emoji: "🎨"
+      name: "Subhodhraj BS",
+      role: "Co-Founder & Product Strategist",
+      description: "Student entrepreneur focused on creating meaningful impact through sustainable technology. Driving product strategy and user experience to make eco-friendly transport accessible to everyone.",
+      emoji: "🌟"
     }
   ];
 
