@@ -78,19 +78,19 @@ const About = () => {
                 <h2 className="text-4xl font-bold text-gradient-eco">Our Story</h2>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Go Green started as a simple idea during a particularly smoggy day in downtown metro. 
-                    Our founder, Alex, was commuting to work and noticed how many single-occupancy vehicles 
-                    were contributing to the air pollution problem.
+                    Go Green started as a student project born from the passion of two Computer Science students,
+                    Rakshith Raghaventhra L and Subhodhraj BS, who noticed the growing need for sustainable
+                    transportation solutions in their community.
                   </p>
                   <p>
-                    "What if we could make sustainable transport choices as rewarding as they are responsible?" 
-                    This question led to the creation of Go Green - a platform that not only tracks your 
-                    eco-friendly journeys but celebrates and rewards them.
+                    "What if we could make sustainable transport choices as rewarding as they are responsible?"
+                    This question led to the creation of Go Green - a platform built by students, for everyone,
+                    that not only tracks your eco-friendly journeys but celebrates and rewards them.
                   </p>
                   <p>
-                    Since our launch in 2024, we've grown from a small team of four to a thriving community 
-                    of over 10,000 users across 50+ cities. Our platform has helped save over 50,000kg of 
-                    CO₂ emissions and has contributed to planting more than 1,000 trees.
+                    As students building this idea from the ground up, we're committed to creating technology
+                    that makes a real difference. Our platform represents the next generation's approach to
+                    environmental sustainability through innovative digital solutions.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
