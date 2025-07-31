@@ -94,9 +94,9 @@ const About = () => {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <Badge className="bg-leaf-green text-primary-foreground px-4 py-2">🌱 Founded 2024</Badge>
-                  <Badge className="bg-forest-green text-primary-foreground px-4 py-2">🌍 50+ Cities</Badge>
-                  <Badge className="bg-primary text-primary-foreground px-4 py-2">👥 10K+ Users</Badge>
+                  <Badge className="bg-leaf-green text-primary-foreground px-4 py-2">🎓 Student Founded</Badge>
+                  <Badge className="bg-forest-green text-primary-foreground px-4 py-2">🚀 Innovation Driven</Badge>
+                  <Badge className="bg-primary text-primary-foreground px-4 py-2">🌱 Built with Purpose</Badge>
                 </div>
               </div>
               <div className="relative">
