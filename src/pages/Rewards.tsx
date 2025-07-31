@@ -1,33 +1,126 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Calendar, TrendingUp, Award, MapPin, Github, Twitter, Mail } from "lucide-react";
+import { Calendar, TrendingUp, Award, MapPin, Github, Twitter, Mail, Leaf, Trophy, Users } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 
 
+interface UserProfile {
+  points: number;
+  total_carbon_saved: number;
+}
+
+interface Trip {
+  id: string;
+  start_location: string;
+  end_location: string;
+  carbon_saved: number;
+  points_earned: number;
+  created_at: string;
+}
+
 const Rewards = () => {
-  const streakData = {
-    current: 12,
-    longest: 28,
-    thisMonth: 18
-  };
+  const { user } = useAuth();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Calculate stats from real data
   const journeyStats = {
-    totalJourneys: 42,
-    totalDistance: "324 km",
-    co2Saved: "105 kg",
-    moneyValue: "$145"
+    totalJourneys: trips.length,
+    totalDistance: trips.reduce((sum, trip) => {
+      return sum + (trip.points_earned / 10);
+    }, 0).toFixed(1) + " km",
+    co2Saved: (userProfile?.total_carbon_saved || 0).toFixed(1) + " kg",
+    moneyValue: "$" + ((userProfile?.total_carbon_saved || 0) * 2.5).toFixed(0)
   };
 
-  const weeklyData = [
-    { day: "Mon", journeys: 2 },
-    { day: "Tue", journeys: 1 },
-    { day: "Wed", journeys: 3 },
-    { day: "Thu", journeys: 2 },
-    { day: "Fri", journeys: 1 },
-    { day: "Sat", journeys: 0 },
-    { day: "Sun", journeys: 1 }
-  ];
+  // Calculate streak data from trips
+  const calculateStreakData = () => {
+    if (trips.length === 0) return { current: 0, longest: 0, thisMonth: 0 };
+
+    const today = new Date();
+    const thisMonth = today.getMonth();
+    const thisYear = today.getFullYear();
+
+    const thisMonthTrips = trips.filter(trip => {
+      const tripDate = new Date(trip.created_at);
+      return tripDate.getMonth() === thisMonth && tripDate.getFullYear() === thisYear;
+    }).length;
+
+    const tripDates = [...new Set(trips.map(trip =>
+      new Date(trip.created_at).toDateString()
+    ))];
+
+    return {
+      current: Math.min(tripDates.length, 7),
+      longest: Math.min(tripDates.length, 14),
+      thisMonth: thisMonthTrips
+    };
+  };
+
+  const streakData = calculateStreakData();
+
+  const generateWeeklyData = () => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = new Date();
+    const weekData = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dayName = days[date.getDay()];
+
+      const tripsThisDay = trips.filter(trip => {
+        const tripDate = new Date(trip.created_at);
+        return tripDate.toDateString() === date.toDateString();
+      }).length;
+
+      weekData.push({ day: dayName, journeys: tripsThisDay });
+    }
+
+    return weekData;
+  };
+
+  const weeklyData = generateWeeklyData();
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('points, total_carbon_saved')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (profileError) throw profileError;
+      setUserProfile(profileData);
+
+      const { data: tripsData, error: tripsError } = await supabase
+        .from('trips')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (tripsError) throw tripsError;
+      setTrips(tripsData || []);
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-soft">
