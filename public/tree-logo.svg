@@ -1,0 +1,19 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="treeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="50%" stop-color="#059f69"/>
+      <stop offset="100%" stop-color="#047e57"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#treeGradient)"/>
+  <!-- Tree trunk -->
+  <rect x="28" y="40" width="8" height="16" rx="2" fill="#8B4513"/>
+  <!-- Tree leaves - multiple circles for fullness -->
+  <circle cx="32" cy="25" r="12" fill="#22c55e" opacity="0.9"/>
+  <circle cx="26" cy="22" r="8" fill="#16a34a" opacity="0.8"/>
+  <circle cx="38" cy="22" r="8" fill="#16a34a" opacity="0.8"/>
+  <circle cx="32" cy="18" r="6" fill="#15803d" opacity="0.9"/>
+  <!-- Highlight -->
+  <circle cx="28" cy="20" r="3" fill="#4ade80" opacity="0.6"/>
+</svg>

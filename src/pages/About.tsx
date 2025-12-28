@@ -2,34 +2,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Heart, Users, Lightbulb, Globe, Mail, Github, Twitter } from "lucide-react";
 import Header from "@/components/Header";
-import communityEco from "@/assets/community-eco.png";
-import treeLogo from "@/assets/tree-logo.png";
+
 
 const About = () => {
   const teamMembers = [
     {
-      name: "Alex Rivera",
-      role: "Founder & CEO",
-      description: "Environmental engineer passionate about sustainable transportation solutions.",
-      emoji: "🌱"
+      name: "Rakshith Raghaventhra L",
+      role: "Co-Founder & Lead Developer",
+      description: "Computer Science student passionate about building innovative solutions for environmental sustainability. Leading the technical development and bringing the Go Green vision to life.",
+      emoji: "👨‍💻"
     },
     {
-      name: "Sarah Chen",
-      role: "Head of Community",
-      description: "Community builder focused on creating meaningful connections between eco-warriors.",
-      emoji: "🤝"
-    },
-    {
-      name: "Marcus Johnson",
-      role: "Tech Lead",
-      description: "Full-stack developer building scalable solutions for environmental impact tracking.",
-      emoji: "💻"
-    },
-    {
-      name: "Elena Popova",
-      role: "UX Designer",
-      description: "Designer creating intuitive experiences that encourage sustainable behavior change.",
-      emoji: "🎨"
+      name: "Subhodhraj BS",
+      role: "Co-Founder & Product Strategist",
+      description: "Student entrepreneur focused on creating meaningful impact through sustainable technology. Driving product strategy and user experience to make eco-friendly transport accessible to everyone.",
+      emoji: "🌟"
     }
   ];
 
@@ -63,13 +50,13 @@ const About = () => {
       {/* Hero Section */}
       <section className="py-20 bg-gradient-nature relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src={communityEco} alt="" className="w-full h-full object-cover" />
+          <img src="/community-eco.svg" alt="" className="w-full h-full object-cover" />
         </div>
         
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex justify-center mb-6">
-              <img src={treeLogo} alt="Go Green" className="h-20 w-20 animate-gentle-bounce" />
+              <img src="/tree-logo.svg" alt="Go Green" className="h-20 w-20 animate-gentle-bounce" />
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gradient-eco mb-6">
               About Go Green
@@ -91,31 +78,31 @@ const About = () => {
                 <h2 className="text-4xl font-bold text-gradient-eco">Our Story</h2>
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
-                    Go Green started as a simple idea during a particularly smoggy day in downtown metro. 
-                    Our founder, Alex, was commuting to work and noticed how many single-occupancy vehicles 
-                    were contributing to the air pollution problem.
+                    Go Green started as a student project born from the passion of two Computer Science students,
+                    Rakshith Raghaventhra L and Subhodhraj BS, who noticed the growing need for sustainable
+                    transportation solutions in their community.
                   </p>
                   <p>
-                    "What if we could make sustainable transport choices as rewarding as they are responsible?" 
-                    This question led to the creation of Go Green - a platform that not only tracks your 
-                    eco-friendly journeys but celebrates and rewards them.
+                    "What if we could make sustainable transport choices as rewarding as they are responsible?"
+                    This question led to the creation of Go Green - a platform built by students, for everyone,
+                    that not only tracks your eco-friendly journeys but celebrates and rewards them.
                   </p>
                   <p>
-                    Since our launch in 2024, we've grown from a small team of four to a thriving community 
-                    of over 10,000 users across 50+ cities. Our platform has helped save over 50,000kg of 
-                    CO₂ emissions and has contributed to planting more than 1,000 trees.
+                    As students building this idea from the ground up, we're committed to creating technology
+                    that makes a real difference. Our platform represents the next generation's approach to
+                    environmental sustainability through innovative digital solutions.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <Badge className="bg-leaf-green text-primary-foreground px-4 py-2">🌱 Founded 2024</Badge>
-                  <Badge className="bg-forest-green text-primary-foreground px-4 py-2">🌍 50+ Cities</Badge>
-                  <Badge className="bg-primary text-primary-foreground px-4 py-2">👥 10K+ Users</Badge>
+                  <Badge className="bg-leaf-green text-primary-foreground px-4 py-2">🎓 Student Founded</Badge>
+                  <Badge className="bg-forest-green text-primary-foreground px-4 py-2">🚀 Innovation Driven</Badge>
+                  <Badge className="bg-primary text-primary-foreground px-4 py-2">🌱 Built with Purpose</Badge>
                 </div>
               </div>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-eco rounded-3xl transform rotate-3"></div>
                 <img 
-                  src={communityEco} 
+                  src="/community-eco.svg" 
                   alt="Go Green Community" 
                   className="relative w-full h-auto rounded-3xl shadow-card"
                 />
@@ -159,21 +146,31 @@ const About = () => {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gradient-eco mb-4">Meet Our Team</h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                The passionate individuals working to make sustainable transport accessible and rewarding for everyone.
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                Meet the student founders who are passionate about bringing innovative sustainable transport solutions to life through technology and community impact.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
               {teamMembers.map((member, index) => (
-                <Card key={index} className="card-eco text-center group hover:scale-105 transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Card key={index} className="card-eco text-center group hover:scale-105 transition-all duration-500 relative overflow-hidden">
+                  {/* Background gradient effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-emerald-100/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                  <CardContent className="p-8 relative z-10">
+                    <div className="text-7xl mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
                       {member.emoji}
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-1">{member.name}</h3>
-                    <p className="text-primary font-medium mb-3">{member.role}</p>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{member.description}</p>
+                    <h3 className="text-2xl font-bold text-foreground mb-2">{member.name}</h3>
+                    <p className="text-primary font-semibold mb-4 text-lg">{member.role}</p>
+                    <p className="text-muted-foreground leading-relaxed">{member.description}</p>
+
+                    {/* Student badge */}
+                    <div className="mt-6">
+                      <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2">
+                        🎓 Student Founder
+                      </Badge>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

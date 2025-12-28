@@ -1,0 +1,21 @@
+<svg width="128" height="96" viewBox="0 0 128 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leaf1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#059f69" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="leaf2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#047e57" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#0d9f68" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- First leaf -->
+  <path d="M16 48C16 32 24 16 40 16C56 16 64 32 64 48C64 64 56 80 40 80C24 80 16 64 16 48Z M40 20C40 28 48 36 56 36M40 48C48 48 56 56 56 64" fill="url(#leaf1)" stroke="#059f69" stroke-width="1" stroke-linecap="round"/>
+  
+  <!-- Second leaf -->
+  <path d="M72 24C72 12 80 4 92 4C104 4 112 12 112 24C112 36 104 44 92 44C80 44 72 36 72 24Z M92 8C92 14 98 20 104 20M92 24C98 24 104 30 104 36" fill="url(#leaf2)" stroke="#047e57" stroke-width="1" stroke-linecap="round"/>
+  
+  <!-- Third leaf -->
+  <path d="M24 72C24 64 30 58 40 58C50 58 56 64 56 72C56 80 50 86 40 86C30 86 24 80 24 72ZM40 62C40 66 44 70 48 70M40 72C44 72 48 76 48 80" fill="url(#leaf1)" stroke="#10b981" stroke-width="1" stroke-linecap="round"/>
+</svg>
